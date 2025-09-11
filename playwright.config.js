@@ -13,7 +13,7 @@ export default defineConfig({
   use: {
     baseURL: 'https://rahulshettyacademy.com/client',
     storageState: 'auth/login-state.json',
-    headless: false,
+    headless: true,
     video: 'retain-on-failure',
     trace: 'on-first-retry',
   },
