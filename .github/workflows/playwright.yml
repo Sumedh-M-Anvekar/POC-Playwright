@@ -1,33 +1,30 @@
 name: Playwright Tests
 
 on:
-  workflow_dispatch:   # manual trigger from Actions tab
-  push:                # run on every push
+  workflow_dispatch:
+  push:
     branches: [ main ]
-  pull_request:        # run on PRs targeting main
+  pull_request:
     branches: [ main ]
   schedule:
-      - cron: "0 0 * * *" # every 24hrs (UTC)
+    - cron: "0 0 * * *"
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: [chromium, firefox, webkit] # run in parallel per browser
+        browser: [chromium, firefox, webkit]
 
     steps:
-      # Checkout source code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      # Cache Node.js modules
       - name: Cache Node modules
         uses: actions/cache@v4
         with:
@@ -36,7 +33,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # Cache Playwright browsers
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
@@ -45,21 +41,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-playwright-
 
-      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Install Playwright browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # Run Playwright tests for each browser
       - name: Run Playwright tests
         run: npx playwright test --project=${{ matrix.browser }}
+
+      # ⛔ FORCE FAIL HERE
       - name: Force Fail
         run: exit 1
 
-      # Upload Playwright report
       - name: Upload Playwright Report
         if: always()
         uses: actions/upload-artifact@v4
